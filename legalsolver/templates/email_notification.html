@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .dialog-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+        }
+        .dialog-header {
+            margin-bottom: 20px;
+        }
+        .dialog-header h2 {
+            color: #4b6cb7;
+            margin: 0;
+        }
+        .dialog-content {
+            margin-bottom: 20px;
+        }
+        .department-list {
+            text-align: left;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        .department-item {
+            margin-bottom: 8px;
+        }
+        .ok-button {
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .ok-button:hover {
+            background-color: #3b5998;
+        }
+    </style>
+</head>
+<body>
+    <div class="dialog-container">
+        <div class="dialog-header">
+            <h2>Email Notification</h2>
+        </div>
+        <div class="dialog-content">
+            <p>Your document has been analyzed and emails have been sent to the following departments:</p>
+            <ul class="department-list">
+                {% for department in departments %}
+                <li class="department-item">{{ department }}</li>
+                {% endfor %}
+            </ul>
+            <p>A confirmation email has also been sent to your registered email address.</p>
+        </div>
+        <button class="ok-button" onclick="window.location.href='{{ redirect_url }}'">OK</button>
+    </div>
+</body>
+</html> 

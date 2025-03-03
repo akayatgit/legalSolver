@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document History - Petition Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .history-table th, .history-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f5f8ff;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .download-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .download-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .view-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        .view-btn:hover {
+            background-color: #0b7dda;
+        }
+        
+        .empty-history {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-history i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body class="home-body">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-scale-balanced"></i>
+                    <span>LegalSolver</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}"><i class="fas fa-file-contract"></i> Petition Analysis</a></li>
+                    <li class="active"><a href="{{ url_for('history') }}"><i class="fas fa-history"></i> History</a></li>
+                    <!-- <li><a href="#"><i class="fas fa-book"></i> Legal Resources</a></li>
+                    <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li> -->
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navigation Bar -->
+            <header class="top-header">
+                <div class="page-title">
+                    <h1>Document History</h1>
+                </div>
+                <div class="user-profile">
+                    <div class="notifications">
+                        <i class="far fa-bell"></i>
+                        <span class="notification-badge">2</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="username">{{ username }}</span>
+                        <div class="avatar">
+                            <span>{{ username[0] | upper }}</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <h2>Your Document History</h2>
+                    <p>View and download your previously analyzed documents</p>
+                </div>
+
+                {% if error %}
+                <div class="alert error-alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>{{ error }}</span>
+                    <button class="close-alert"><i class="fas fa-times"></i></button>
+                </div>
+                {% endif %}
+
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert info-alert">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{{ message }}</span>
+                            <button class="close-alert"><i class="fas fa-times"></i></button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- History Table -->
+                <div class="card">
+                    <div class="card-content">
+                        {% if documents and documents|length > 0 %}
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>Upload Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in documents %}
+                                <tr>
+                                    <td>{{ doc[1] }}</td>
+                                    <td>{{ doc[2] }}</td>
+                                    <td>
+                                        <a href="{{ url_for('download_document', doc_id=doc[0]) }}" class="action-btn download-btn">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                        <a href="{{ url_for('view_analysis', doc_id=doc[0]) }}" class="action-btn view-btn">
+                                            <i class="fas fa-eye"></i> View Analysis
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="empty-history">
+                            <i class="fas fa-folder-open"></i>
+                            <h3>No Documents Found</h3>
+                            <p>You haven't uploaded any documents for analysis yet.</p>
+                            <a href="{{ url_for('home') }}" class="btn primary-btn">
+                                <i class="fas fa-upload"></i> Upload a Document
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Close alert button
+        const closeButtons = document.querySelectorAll('.close-alert');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.parentElement.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

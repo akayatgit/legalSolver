@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petition Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="home-body">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-scale-balanced"></i>
+                    <span>LegalSolver</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="{{ url_for('home') }}"><i class="fas fa-file-contract"></i> Petition Analysis</a></li>
+                    <li><a href="{{ url_for('history') }}"><i class="fas fa-history"></i> History</a></li>
+                    <!-- <li><a href="#"><i class="fas fa-book"></i> Legal Resources</a></li>
+                    <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li> -->
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navigation Bar -->
+            <header class="top-header">
+                <div class="page-title">
+                    <h1>Petition Analyzer</h1>
+                </div>
+                <div class="user-profile">
+                    <div class="notifications">
+                        <i class="far fa-bell"></i>
+                        <span class="notification-badge">2</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="username">{{ username }}</span>
+                        <div class="avatar">
+                            <span>{{ username[0] | upper }}</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <h2>Upload & Analyze Petitions</h2>
+                    <p>Upload your legal documents for instant AI-powered analysis and recommendations</p>
+                </div>
+
+                {% if doc_saved %}
+                <div class="alert success-alert">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Document successfully analyzed and saved to your history.</span>
+                    <button class="close-alert"><i class="fas fa-times"></i></button>
+                </div>
+                {% endif %}
+
+                {% if error %}
+                <div class="alert error-alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>{{ error }}</span>
+                    <button class="close-alert"><i class="fas fa-times"></i></button>
+                </div>
+                {% endif %}
+
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert info-alert">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{{ message }}</span>
+                            <button class="close-alert"><i class="fas fa-times"></i></button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Upload Card -->
+                {% if not from_history %}
+                <div class="card upload-card">
+                    <div class="card-content">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Upload Your Petition</h3>
+                        <p>Select a file (PDF, DOCX, TXT, or Image) for comprehensive legal analysis</p>
+                        <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+                            <div class="file-upload-container">
+                                <input type="file" name="document" id="file" class="file-input" required>
+                                <label for="file" class="file-label">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>Choose a file</span>
+                                </label>
+                                <span class="file-name">No file chosen</span>
+                            </div>
+                            <button type="submit" class="btn primary-btn">
+                                <i class="fas fa-search"></i> Analyze Petition
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Results Section -->
+                {% if petition_text or analysis_results %}
+                <div class="results-container">
+                    {% if petition_text %}
+                    <div class="card result-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-file-alt"></i> Extracted Petition Text</h3>
+                            <div class="card-actions">
+                                <button class="btn icon-btn"><i class="fas fa-copy"></i></button>
+                                <button class="btn icon-btn"><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <pre class="extracted-text">{{ petition_text }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if analysis_results %}
+                    <div class="card result-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-search"></i> Analysis Results</h3>
+                            <div class="card-actions">
+                                <button class="btn icon-btn"><i class="fas fa-copy"></i></button>
+                                <button class="btn icon-btn"><i class="fas fa-download"></i></button>
+                                <button class="btn icon-btn"><i class="fas fa-print"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="analysis-results">{{ analysis_results | safe }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if from_history %}
+                    <div class="back-to-history">
+                        <a href="{{ url_for('history') }}" class="btn secondary-btn">
+                            <i class="fas fa-arrow-left"></i> Back to History
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // File input handling
+        const fileInput = document.getElementById('file');
+        const fileName = document.querySelector('.file-name');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    fileName.textContent = this.files[0].name;
+                } else {
+                    fileName.textContent = 'No file chosen';
+                }
+            });
+        }
+
+        // Close alert button
+        const closeButtons = document.querySelectorAll('.close-alert');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.parentElement.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

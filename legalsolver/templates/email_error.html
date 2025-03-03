@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sending Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .dialog-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 500px;
+            max-width: 90%;
+            text-align: center;
+        }
+        .dialog-header {
+            margin-bottom: 20px;
+        }
+        .dialog-header h2 {
+            color: #e74c3c;
+            margin: 0;
+        }
+        .dialog-content {
+            margin-bottom: 20px;
+        }
+        .department-list {
+            text-align: left;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        .department-item {
+            margin-bottom: 8px;
+        }
+        .error-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .email-info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .ok-button {
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .ok-button:hover {
+            background-color: #3b5998;
+        }
+    </style>
+</head>
+<body>
+    <div class="dialog-container">
+        <div class="dialog-header">
+            <h2>Email Sending Error</h2>
+        </div>
+        <div class="dialog-content">
+            <p>Your document has been analyzed and the following relevant departments were identified:</p>
+            <ul class="department-list">
+                {% for department in departments %}
+                <li class="department-item">{{ department }}</li>
+                {% endfor %}
+            </ul>
+            <div class="error-message">
+                <p><strong>Error:</strong> Emails could not be sent to these departments due to email configuration issues.</p>
+                <p>Please check the following:</p>
+                <ul>
+                    <li>Internet connection is working properly</li>
+                    <li>Email server is accessible</li>
+                    <li>Contact system administrator if the problem persists</li>
+                </ul>
+            </div>
+            
+            <div class="email-info">
+                <p><strong>Email Configuration Information</strong></p>
+                <p>The system is configured to use the following email settings:</p>
+                <ul>
+                    <li>Email: notification@agentsdistrict.com</li>
+                    <li>SMTP Server: smtp.hostinger.com</li>
+                    <li>SMTP Port: 465 (SSL)</li>
+                </ul>
+                <p>If you continue to experience issues, please contact the system administrator.</p>
+            </div>
+            
+            <p>You can still view the analysis results by clicking the button below.</p>
+        </div>
+        <button class="ok-button" onclick="window.location.href='{{ redirect_url }}'">View Analysis</button>
+    </div>
+</body>
+</html> 
