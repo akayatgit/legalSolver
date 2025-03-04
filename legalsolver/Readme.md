@@ -1,6 +1,0 @@
-- Login
-- Upload
-- Related IPC section + Legal councelling
-- History
-- Localization
-- Email Notification
